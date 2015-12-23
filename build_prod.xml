@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="trade.web" default="release">
+
+	<property name="project.name" value="ant.api" />
+	<property name="env" value="prod" />
+	<property name="src.dir" location="src" />
+	<property name="resource.dir" location="build_config/${env}" />
+	<property name="web.dir" location="web"/> 
+	<property name="build.dir" location="${web.dir}/WEB-INF/classes"/>
+	<property name="lib.dir" location="${web.dir}/WEB-INF/lib"/>
+	<property name="dist.dir" location="dist/open" />
+	<property name="dist.class.dir" location="${dist.dir}/WEB-INF/classes/" />
+	<property name="release" location="release" />
+	
+	 <path id="compile.classpath">
+  		<pathelement path ="${build.dir}"/>
+  		<fileset dir="${lib.dir}">
+   			<include name="**/*.jar"/>
+  		</fileset>
+ 	</path>
+	
+	<target name="init_build">
+		<delete dir="${build.dir}"/>
+	    <mkdir dir="${build.dir}" />     
+	</target>
+	
+	<target name="compile" depends="init_build" >
+		<javac  srcdir="${src.dir}" destdir="${build.dir}"  encoding="UTF-8" verbose="off" includeantruntime="off" debug="true">
+			<classpath refid="compile.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="dist" depends="compile">
+		<delete dir="${dist.dir}"/>
+	    <mkdir dir="${dist.dir}" />
+	    
+	    <copy todir="${dist.dir}">
+            <fileset dir="${web.dir}/">
+               <include name="META-INF/**" />
+               <include name="WEB-INF/**" />
+          </fileset>
+       </copy>
+		<copydir dest="${dist.class.dir}/properties" src="${resource.dir}/properties"/>
+		<copydir dest="${dist.class.dir}/services" src="${resource.dir}/services"/>
+	</target>
+	
+	<target name="release" depends="dist">
+	    <delete dir="${release}"/>
+	    <mkdir dir="${release}"/>
+        <tar destfile="${release}/${project.name}.tar" basedir="${dist.dir}"/>
+        <gzip src="${release}/${project.name}.tar" zipfile="${release}/${project.name}.tar.gz"/>
+    </target>
+
+</project>
+

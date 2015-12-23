@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="open.web" default="dist">
+    <property file="build.properties"/>
+    
+	<property name="project.name" value="ant.api" />
+	  
+	<property name="src.dir" location="src" />
+	<property name="resource.dir" location="resource" />
+	<property name="web.dir" location="web"/> 
+	<property name="build.dir" location="${web.dir}/WEB-INF/classes"/>
+	<property name="tomcat.lib" location="${tomcat}/lib"/>
+	<property name="lib.dir" location="${web.dir}/WEB-INF/lib"/>
+	       
+	<property name="dist.dir" location="dist/youguu" />
+	<property name="dist.class.dir" location="dist/youguu/WEB-INF/classes/" />
+	
+	<property name="release" location="release" />
+	
+	 <path id="compile.classpath">
+  		<pathelement path ="${build.dir}"/>
+  		<fileset dir="${lib.dir}">
+   			<include name="**/*.jar"/>
+  		</fileset>
+  		<fileset dir="${tomcat.lib}">
+   			<include name="**/*.jar"/>
+  		</fileset>
+ 	</path>
+	
+	<target name="init_build">
+		<delete dir="${build.dir}"/>
+	    <mkdir dir="${build.dir}" />     
+	</target>
+	
+	<target name="compile" depends="init_build" >
+		<javac  srcdir="${src.dir}" destdir="${build.dir}"  encoding="UTF-8" verbose="on" includeantruntime="off">
+			<classpath refid="compile.classpath"/>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile">
+		<delete dir="${dist.dir}"/>
+		<mkdir dir="${dist.dir}" />
+
+		<copy todir="${dist.dir}">
+			<fileset dir="${web.dir}/">
+				<include name="META-INF/**" />
+				<include name="WEB-INF/**" />
+			</fileset>
+		</copy>
+		<copydir dest="${dist.class.dir}/properties" src="resource/properties"/>
+	</target>
+
+	<target name="release" depends="dist">
+		<delete dir="${release}"/>
+		<mkdir dir="${release}"/>
+		<tar destfile="${release}/${project.name}.tar" basedir="${dist.dir}"/>
+		<gzip src="${release}/${project.name}.tar" zipfile="${release}/${project.name}.tar.gz"/>
+	</target>
+	
+
+</project>
+
