@@ -5,7 +5,6 @@ build
 dist
 release
 out/
-poolConfig.properties
 .classpath
 .gradle/
 .project
